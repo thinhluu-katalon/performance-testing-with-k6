@@ -1,5 +1,6 @@
 # Performance Testing with K6
 
+> Fork from [this repository](https://github.com/mdcruz/k6-sample-project)<br/>
 > Load testing workshop, demonstrating k6
 
 ## Video
