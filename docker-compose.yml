@@ -10,8 +10,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.grafana
-    links:
-      - influxdb
     environment:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -24,6 +22,7 @@ services:
       - "6565:6565"
     volumes:
       - "./tests:/tests"
+      - "./utils.js:/utils.js"
     environment:
       - K6_OUT=influxdb=http://influxdb:8086/k6
     command: "version"
