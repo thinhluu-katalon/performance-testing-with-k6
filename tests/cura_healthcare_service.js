@@ -1,28 +1,8 @@
 // Creator: k6 Browser Recorder 0.6.2
 
-import { sleep, group, check } from 'k6'
+import { group, sleep } from 'k6'
 import http from 'k6/http'
-import { Rate } from 'k6/metrics'
-import { randomlyPickValueFromObject } from '/utils.js'
-
-const errorRate = new Rate("error_rate");
-
-export const options = {
-  stages: [
-    // Ramp-up 
-    { duration: '5s', target: 10 },
-
-    // Stay at 10 VUs for 5s
-    { duration: '5s', target: 10 },
-
-    // Ramp-down
-    { duration: '5s', target: 0 },
-  ],
-  thresholds: {
-    // More than 10% of error be considered as fail
-    error_rate: ["rate<0.1"],
-  }
-}
+import { randomlyPickValueFromObject, checkStatus } from '../utils.js'
 
 const facility = {
  SEOUL: 'Seoul CURA Healthcare Center',
@@ -38,7 +18,7 @@ const program = {
 
 const baseURL = 'https://katalon-demo-cura.herokuapp.com';
 
-export default function main() {
+export default function cura_healthcare_service() {
   let response
 
   group('Authenticate with default credentials', function() {
@@ -48,6 +28,15 @@ export default function main() {
         password: 'ThisIsNotAPassword',
       }
     );
+
+    checkStatus({
+      response: response,
+      expectedStatus: 200,
+      printOnError: false,
+      failOnError: false,
+    });
+
+    sleep(3);
   });
 
   group('Book an appointment', function () {
@@ -63,18 +52,13 @@ export default function main() {
     );
     console.debug(JSON.stringify(response, null, "  "));
 
-    let success = check(response, {
-        "status is 200": r => r.status === 200,
-      }
-    );
+    checkStatus({
+      response: response,
+      expectedStatus: 200,
+      printOnError: false,
+      failOnError: false,
+    });
 
-    if (!success) {
-      errorRate.add(true);
-    } else {
-      errorRate.add(false);
-    }
+    sleep(3);
   });
-
-  // Add sleep so that server can cope with the traffic
-  sleep(1)
 }
