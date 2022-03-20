@@ -40,11 +40,7 @@ export default function main() {
         visit_date: '05/04/2022',
         comment: 'CURA health service demo',
       },
-      { headers: { 'Content-Type': 'application/json' } },
     );
-    check(response, {
-      'is status 200': r => r.status === 200,
-    });
     console.debug(JSON.stringify(response, null, "  "));
   });
 
