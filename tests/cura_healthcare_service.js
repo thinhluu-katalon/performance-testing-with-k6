@@ -18,11 +18,13 @@ const program = {
   NONE: 'None',
 };
 
+const baseURL = 'https://katalon-demo-cura.herokuapp.com';
+
 export default function main() {
   let response
 
   group('Authenticate with default credentials', function() {
-    response = http.post('https://katalon-demo-cura.herokuapp.com/authenticate.php',
+    response = http.post(`${baseURL}/authenticate.php`,
       {
         username: 'John Doe',
         password: 'ThisIsNotAPassword',
@@ -32,7 +34,7 @@ export default function main() {
 
   group('Book an appointment', function () {
     response = http.post(
-      'https://katalon-demo-cura.herokuapp.com/appointment.php',
+      `${baseURL}/appointment.php`,
       {
         facility: randomlyPickValueFromObject(facility),
         programs: randomlyPickValueFromObject(program),
