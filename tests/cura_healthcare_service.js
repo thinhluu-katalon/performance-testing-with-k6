@@ -2,9 +2,27 @@
 
 import { sleep, group, check } from 'k6'
 import http from 'k6/http'
-import { randomlyPickValueFromObject } from '../utils.js'
+import { Rate } from 'k6/metrics'
+import { randomlyPickValueFromObject } from '/utils.js'
 
-export const options = { vus: 10, duration: '10s' }
+const errorRate = new Rate("error_rate");
+
+export const options = {
+  stages: [
+    // Ramp-up 
+    { duration: '5s', target: 10 },
+
+    // Stay at 10 VUs for 5s
+    { duration: '5s', target: 10 },
+
+    // Ramp-down
+    { duration: '5s', target: 0 },
+  ],
+  thresholds: {
+    // More than 10% of error be considered as fail
+    error_rate: ["rate<0.1"],
+  }
+}
 
 const facility = {
  SEOUL: 'Seoul CURA Healthcare Center',
@@ -44,6 +62,17 @@ export default function main() {
       },
     );
     console.debug(JSON.stringify(response, null, "  "));
+
+    let success = check(response, {
+        "status is 200": r => r.status === 200,
+      }
+    );
+
+    if (!success) {
+      errorRate.add(true);
+    } else {
+      errorRate.add(false);
+    }
   });
 
   // Add sleep so that server can cope with the traffic
