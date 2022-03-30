@@ -21,8 +21,7 @@ services:
     ports:
       - "6565:6565"
     volumes:
-      - "./tests:/tests"
-      - "./utils.js:/utils.js"
+      - ./k6:/app
     environment:
       - K6_OUT=influxdb=http://influxdb:8086/k6
     command: "version"

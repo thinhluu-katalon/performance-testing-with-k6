@@ -6,7 +6,7 @@
 ## Getting started:
 - `docker-compose up -d influxdb grafana`
 - Load http://localhost:3000, and import the `grafana_dashboard.json` config to a new dashboard.
-- `docker-compose run k6 run /tests/cura_healthcare_service.js`
+- `docker-compose run k6 run /app/tests/cura_healthcare_service.js`
 
 ## To use cloud run
 
